@@ -49,6 +49,7 @@ function checkFeedback(){
      */
 function setColor(color, index){
     currentRound[index] = color;
+    return null;
 }
 
 //submit guess
@@ -65,3 +66,12 @@ function submitGuess(){
 }
 
 </script>
+
+<div>
+    <button onclick={setColor('red', 0)}>Set Color 1</button>
+    <button onclick={setColor('blue', 1)}>Set Color 2</button>
+    <button onclick={setColor('green', 2)}>Set Color 3</button>
+    <button onclick={setColor('yellow', 3)}>Set Color 4</button>
+</div>
+
+<button onclick={submitGuess}>Submit Guess</button>
