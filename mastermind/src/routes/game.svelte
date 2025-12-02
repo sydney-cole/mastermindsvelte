@@ -71,6 +71,17 @@ function submitGuess(){
 
 <div class="gameDiv">
     <div>
+        <ul>
+        {#each Array(round) as _}
+        <li>
+            {#each currentRound as selectedColor}
+                <button class="color-btn {selectedColor}"></button>
+            {/each}
+        </li>
+        {/each}
+        </ul>
+    </div>
+    <div>
         <button class="color-btn red" onclick={setColor('red')}></button>
         <button class="color-btn blue" onclick={setColor('blue')}></button>
         <button class="color-btn green" onclick={setColor('green')}></button>
