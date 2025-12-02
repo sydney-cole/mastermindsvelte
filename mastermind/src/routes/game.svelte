@@ -24,9 +24,6 @@ let answerKey = $state(['', '', '', '']);
 let guessArray =  $state(Array.from({ length: 12 }, () => ['', '', '', '']));
 let currentRound =  $state(['', '', '', '']);
 
-
-//start
-
 //check lose condition
 function gameLost(){
     return round > 11;
@@ -46,7 +43,11 @@ function checkFeedback(){
 }
 
 //set single color
-function setColor(color : string, index : int){
+    /**
+     * @param {string} color
+     * @param {number} index
+     */
+function setColor(color, index){
     currentRound[index] = color;
 }
 
