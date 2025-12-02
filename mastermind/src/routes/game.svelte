@@ -22,15 +22,45 @@ RULES
 let round = $state(0);
 let answerKey = $state(['', '', '', '']);
 let guessArray =  $state(Array.from({ length: 12 }, () => ['', '', '', '']));
+let currentRound =  $state(['', '', '', '']);
 
 
 //start
-//check win condition
-//check lose condition
-//submit guess
-//set single color
-//provide feedback
-//check if single color is correct
 
+//check lose condition
+function gameLost(){
+    return round > 11;
+}
+
+//provide feedback
+function checkFeedback(){
+    let rightSpot = 0;
+    let rightColor = 0;
+    for (let color in guessArray[round]){
+        if (answerKey.includes(color)){
+            if (guessArray[round].indexOf(color) == answerKey.indexOf(color)) rightSpot++;
+            else rightColor++;
+        }
+    }
+    return [rightSpot, rightColor];
+}
+
+//set single color
+function setColor(color : string, index : int){
+    currentRound[index] = color;
+}
+
+//submit guess
+function submitGuess(){
+    //error message here?
+    if (currentRound.includes('')) return;
+    guessArray[round] = currentRound;
+    round++;
+
+    let feedback = checkFeedback();
+    if (feedback[0] == 4) return 'game won!';
+    if (gameLost()) return 'game lost :('
+    //add UI stuff here
+}
 
 </script>
