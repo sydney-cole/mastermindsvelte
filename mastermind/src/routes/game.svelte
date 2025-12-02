@@ -23,6 +23,7 @@ let round = $state(0);
 let answerKey = $state(['', '', '', '']);
 let guessArray =  $state(Array.from({ length: 12 }, () => ['', '', '', '']));
 let currentRound =  $state(['', '', '', '']);
+let colorIndex = $state(0);
 
 //check lose condition
 function gameLost(){
@@ -45,10 +46,11 @@ function checkFeedback(){
 //set single color
     /**
      * @param {string} color
-     * @param {number} index
      */
-function setColor(color, index){
-    currentRound[index] = color;
+function setColor(color){
+    if (colorIndex > 3) return null;
+    currentRound[colorIndex] = color;
+    colorIndex++;
     return null;
 }
 
@@ -69,11 +71,27 @@ function submitGuess(){
 
 <div class="gameDiv">
     <div>
-        <button onclick={setColor('red', 0)}>Set Color 1</button>
-        <button onclick={setColor('blue', 1)}>Set Color 2</button>
-        <button onclick={setColor('green', 2)}>Set Color 3</button>
-        <button onclick={setColor('yellow', 3)}>Set Color 4</button>
+        <button class="color-btn red" onclick={setColor('red')}></button>
+        <button class="color-btn blue" onclick={setColor('blue')}></button>
+        <button class="color-btn green" onclick={setColor('green')}></button>
+        <button class="color-btn yellow" onclick={setColor('yellow')}></button>
     </div>
 
     <button onclick={submitGuess}>Submit Guess</button>
 </div>
+
+<style>
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid black;
+    margin: 0 8px;
+    cursor: pointer;
+    display: inline-block;
+}
+.color-btn.red { background: red; }
+.color-btn.blue { background: blue; }
+.color-btn.green { background: green; }
+.color-btn.yellow { background: yellow; }
+</style>
