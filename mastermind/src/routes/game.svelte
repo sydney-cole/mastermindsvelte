@@ -1,4 +1,5 @@
 <script>
+import { writable, get } from 'svelte/store';
 
 /* 
 STARTING CONDITIONS
@@ -19,77 +20,77 @@ RULES
 
 */
 
-let round = $state(0);
-let answerKey = $state(['', '', '', '']);
-let guessArray =  $state(Array.from({ length: 12 }, () => ['', '', '', '']));
-let currentRound =  $state(['', '', '', '']);
-let colorIndex = $state(0);
+let round = writable(0);
+let answerKey = writable(['', '', '', '']);
+let guessArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
+let currentRound = writable(['', '', '', '']);
+let colorIndex = writable(0);
 
 //check lose condition
 function gameLost(){
-    return round > 11;
+    return get(round) > 11;
 }
 
 //provide feedback
 function checkFeedback(){
+    const answer = get(answerKey);
+    const guess = get(guessArray)[get(round)];
     let rightSpot = 0;
     let rightColor = 0;
-    for (let color in guessArray[round]){
-        if (answerKey.includes(color)){
-            if (guessArray[round].indexOf(color) == answerKey.indexOf(color)) rightSpot++;
-            else rightColor++;
-        }
+    for (let i = 0; i < guess.length; i++) {
+        if (guess[i] === answer[i] && guess[i] !== '') rightSpot++;
+        else if (answer.includes(guess[i]) && guess[i] !== '') rightColor++;
     }
     return [rightSpot, rightColor];
 }
 
 //set single color
-    /**
-     * @param {string} color
-     */
-function setColor(color){
-    if (colorIndex > 3) return null;
-    currentRound[colorIndex] = color;
-    colorIndex++;
+function setColor(color) {
+    const idx = get(colorIndex);
+    const roundArr = get(currentRound);
+    if (idx > 3) return null;
+    const updatedRound = [...roundArr];
+    updatedRound[idx] = color;
+    currentRound.set(updatedRound);
+    colorIndex.set(idx + 1);
     return null;
 }
 
-//submit guess
 function submitGuess(){
+    const roundVal = get(round);
+    const curr = get(currentRound);
+    const guesses = get(guessArray);
     //error message here?
-    if (currentRound.includes('')) return;
-    guessArray[round] = currentRound;
-    round++;
-
+    if (curr.includes('')) return;
+    const updatedGuesses = guesses.map((guess, i) => i === roundVal ? [...curr] : guess);
+    guessArray.set(updatedGuesses);
+    round.set(roundVal + 1);
+    currentRound.set(['', '', '', '']);
+    colorIndex.set(0);
     let feedback = checkFeedback();
     if (feedback[0] == 4) return 'game won!';
     if (gameLost()) return 'game lost :('
     //add UI stuff here
 }
-
 </script>
-
-<div class="gameDiv">
-    <div>
-        <ul>
-        {#each Array(round) as _}
-        <li>
-            {#each currentRound as selectedColor}
-                <button class="color-btn {selectedColor}"></button>
-            {/each}
-        </li>
+<div>
+    <ul>
+    {#each Array($round) as _, i}
+    <li>
+        {#each $guessArray[i] as selectedColor}
+            <button class="color-btn {selectedColor}"></button>
         {/each}
-        </ul>
-    </div>
-    <div>
-        <button class="color-btn red" onclick={setColor('red')}></button>
-        <button class="color-btn blue" onclick={setColor('blue')}></button>
-        <button class="color-btn green" onclick={setColor('green')}></button>
-        <button class="color-btn yellow" onclick={setColor('yellow')}></button>
-    </div>
-
-    <button onclick={submitGuess}>Submit Guess</button>
+    </li>
+    {/each}
+    </ul>
 </div>
+<div>
+    <button class="color-btn red" on:click={() => setColor('red')}></button>
+    <button class="color-btn blue" on:click={() => setColor('blue')}></button>
+    <button class="color-btn green" on:click={() => setColor('green')}></button>
+    <button class="color-btn yellow" on:click={() => setColor('yellow')}></button>
+</div>
+<button on:click={submitGuess}>Submit Guess</button>
 
 <style>
 .color-btn {
