@@ -45,6 +45,9 @@ function checkFeedback(){
 }
 
 //set single color
+    /**
+     * @param {string} color
+     */
 function setColor(color) {
     const idx = get(colorIndex);
     const roundArr = get(currentRound);
@@ -60,18 +63,31 @@ function submitGuess(){
     const roundVal = get(round);
     const curr = get(currentRound);
     const guesses = get(guessArray);
+    const colorIdx = get(colorIndex);
     //error message here?
-    if (curr.includes('')) return;
+    if (colorIdx < 3) return;
     const updatedGuesses = guesses.map((guess, i) => i === roundVal ? [...curr] : guess);
     guessArray.set(updatedGuesses);
     round.set(roundVal + 1);
     currentRound.set(['', '', '', '']);
     colorIndex.set(0);
+
     let feedback = checkFeedback();
     if (feedback[0] == 4) return 'game won!';
     if (gameLost()) return 'game lost :('
     //add UI stuff here
 }
+
+//start game
+function start(){
+    const colors = ['red', 'blue', 'green', 'yellow'];
+    round.set(0);
+    guessArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
+    currentRound.set(['', '', '', '']);
+    colorIndex.set(0);
+    answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
+}
+
 </script>
 <div>
     <ul>
