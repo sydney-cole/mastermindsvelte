@@ -52,7 +52,6 @@ function checkFeedback(){
         return ['', '', '', ''];
     }
 
-    
     let feedback = [];
     for (let i = 0; i < rightSpot; i++) {
         feedback.push('red');
@@ -112,32 +111,37 @@ function start(){
 }
 
 </script>
-<div>
-    <ul>
-    {#each Array($round) as _, i}
-    <li>
-        {#each $guessArray[i] as selectedColor}
-            <button class="color-btn {selectedColor}"></button>
-        {/each}
-        {#each $feedbackArray[i] as selectedFeedback}
-            <button class="color-btn {selectedFeedback} tiny"></button>
-        {/each}
-    </li>
-    {/each}
-    <li>{#each $currentRound as selectedColor}
-            <button class="color-btn {selectedColor}"></button>
-        {/each}
-    </li>
-    </ul>
-</div>
-<div>
-    <button class="color-btn red" on:click={() => setColor('red')}></button>
-    <button class="color-btn blue" on:click={() => setColor('blue')}></button>
-    <button class="color-btn green" on:click={() => setColor('green')}></button>
-    <button class="color-btn yellow" on:click={() => setColor('yellow')}></button>
-</div>
-<button on:click={submitGuess}>Submit Guess</button>
+
 <button on:click={start}>Start Game</button>
+
+<div>{#if $gameState !== 'START'}
+    <div>
+        <ul>
+        {#each Array($round) as _, i}
+        <li>
+            {#each $guessArray[i] as selectedColor}
+                <button class="color-btn {selectedColor}"></button>
+            {/each}
+            {#each $feedbackArray[i] as selectedFeedback}
+                <button class="color-btn {selectedFeedback} tiny"></button>
+            {/each}
+        </li>
+        {/each}
+        <li>{#each $currentRound as selectedColor}
+                <button class="color-btn {selectedColor}"></button>
+            {/each}
+        </li>
+        </ul>
+    </div>
+    <div>
+        <button class="color-btn red" on:click={() => setColor('red')}></button>
+        <button class="color-btn blue" on:click={() => setColor('blue')}></button>
+        <button class="color-btn green" on:click={() => setColor('green')}></button>
+        <button class="color-btn yellow" on:click={() => setColor('yellow')}></button>
+    </div>
+    <button on:click={submitGuess}>Submit Guess</button>
+{/if}</div>
+
 <p>{#if $gameState === 'WON'}You won!{/if}</p>
 <p>{#if $gameState === 'LOST'}You lost! The answer was {$answerKey.join(', ')}{/if}</p>
 
