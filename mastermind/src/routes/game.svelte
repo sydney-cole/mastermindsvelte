@@ -23,6 +23,7 @@ RULES
 let round = writable(0);
 let answerKey = writable(['', '', '', '']);
 let guessArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
+let feedbackArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
 let currentRound = writable(['', '', '', '']);
 let colorIndex = writable(0);
 let gameState = writable("START"); //START, IN_PROGRESS, WON, LOST
@@ -42,7 +43,25 @@ function checkFeedback(){
         if (guess[i] === answer[i] && guess[i] !== '') rightSpot++;
         else if (answer.includes(guess[i]) && guess[i] !== '') rightColor++;
     }
-    return [rightSpot, rightColor];
+    if (rightSpot == 4) {
+        gameState.set('WON');
+        return ['red', 'red', 'red', 'red'];
+    }
+    if (gameLost()) {
+        gameState.set('LOST');
+        return ['', '', '', ''];
+    }
+
+    
+    let feedback = [];
+    for (let i = 0; i < rightSpot; i++) {
+        feedback.push('red');
+    }
+    for (let i = 0; i < rightColor; i++) {
+        feedback.push('white');
+    }
+    console.log('Feedback:', feedback);
+    return feedback;
 }
 
 //set single color
@@ -64,19 +83,15 @@ function submitGuess(){
     const roundVal = get(round);
     const curr = get(currentRound);
     const guesses = get(guessArray);
+    const feedback = get(feedbackArray);
     const colorIdx = get(colorIndex);
     //error message here?
     if (colorIdx < 3) return;
     const updatedGuesses = guesses.map((guess, i) => i === roundVal ? [...curr] : guess);
     guessArray.set(updatedGuesses);
 
-    let feedback = checkFeedback();
-    if (feedback[0] == 4) {
-        gameState.set('WON');
-    }
-    if (gameLost()) {
-        gameState.set('LOST');
-    }
+    const updatedFeedback = feedback.map((fb, i) => i === roundVal ? checkFeedback() : fb);
+    feedbackArray.set(updatedFeedback);
 
     round.set(roundVal + 1);
     currentRound.set(['', '', '', '']);
@@ -90,10 +105,10 @@ function start(){
     const colors = ['red', 'blue', 'green', 'yellow'];
     round.set(0);
     guessArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
+    feedbackArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
     currentRound.set(['', '', '', '']);
     colorIndex.set(0);
-    answerKey.set(['red', 'red', 'red', 'red']);
-    //answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
+    answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
 }
 
 </script>
@@ -103,6 +118,9 @@ function start(){
     <li>
         {#each $guessArray[i] as selectedColor}
             <button class="color-btn {selectedColor}"></button>
+        {/each}
+        {#each $feedbackArray[i] as selectedFeedback}
+            <button class="color-btn {selectedFeedback} tiny"></button>
         {/each}
     </li>
     {/each}
@@ -137,4 +155,7 @@ function start(){
 .color-btn.blue { background: blue; }
 .color-btn.green { background: green; }
 .color-btn.yellow { background: yellow; }
+.color-btn.white { background: white; }
+
+.color-btn.tiny {width: 10px; height: 5px; margin: 0 2px;}
 </style>
