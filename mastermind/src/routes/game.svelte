@@ -59,7 +59,6 @@ function checkFeedback(){
     for (let i = 0; i < rightColor; i++) {
         feedback.push('white');
     }
-    console.log('Feedback:', feedback);
     return feedback;
 }
 
