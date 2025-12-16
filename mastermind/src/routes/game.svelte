@@ -90,7 +90,7 @@ function submitGuess(){
     round.set(roundVal + 1);
     checkGameState();
 
-    currentRound.set(['', '', '', '']);
+    currentRound.set(["", "", "", ""]);
     colorIndex.set(0);
     //add UI stuff here
 }
@@ -98,7 +98,7 @@ function submitGuess(){
 //start game
 function start(){
     gameState.set('IN_PROGRESS');
-    const colors = ['red', 'blue', 'green', 'yellow'];
+    const colors = ["red", "blue", "green", "yellow"];
     round.set(0);
     guessArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
     feedbackArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
@@ -131,10 +131,10 @@ function start(){
         </ul>
     </div>
     <div>
-        <button class="color-btn red" on:click={() => setColor('red')}></button>
-        <button class="color-btn blue" on:click={() => setColor('blue')}></button>
-        <button class="color-btn green" on:click={() => setColor('green')}></button>
-        <button class="color-btn yellow" on:click={() => setColor('yellow')}></button>
+        <button class="color-btn red" on:click={() => setColor("red")}></button>
+        <button class="color-btn blue" on:click={() => setColor("blue")}></button>
+        <button class="color-btn green" on:click={() => setColor("green")}></button>
+        <button class="color-btn yellow" on:click={() => setColor("yellow")}></button>
     </div>
     <button on:click={submitGuess}>Submit Guess</button>
 {/if}</div>
