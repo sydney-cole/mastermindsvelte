@@ -21,20 +21,20 @@ RULES
 */
 
 let round = writable(0);
-let answerKey = writable(['', '', '', '']);
-let guessArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
-let feedbackArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
-let currentRound = writable(['', '', '', '']);
+let answerKey = writable(["", "", "", ""]);
+let guessArray = writable(Array.from({ length: 12 }, () => ["", "", "", ""]));
+let feedbackArray = writable(Array.from({ length: 12 }, () => ["", "", "", ""]));
+let currentRound = writable(["", "", "", ""]);
 let colorIndex = writable(0);
 let gameState = writable("START"); //START, IN_PROGRESS, WON, LOST
 
 //check lose condition
 function checkGameState(){
-    if (get(round) > 1) {
-        gameState.set('LOST');
+    if (get(round) > 11) {
+        return gameState.set('LOST');
     }
-    if (get(feedbackArray)[get(round) - 1].every(color => color === 'red')) {
-        gameState.set('WON');
+    if (get(feedbackArray)[get(round) - 1].every(color => color === "red")) {
+        return gameState.set('WON');
     }
 }
 
@@ -50,10 +50,10 @@ function checkFeedback(){
     }
     let feedback = [];
     for (let i = 0; i < rightSpot; i++) {
-        feedback.push('red');
+        feedback.push("red");
     }
     for (let i = 0; i < rightColor; i++) {
-        feedback.push('white');
+        feedback.push("white");
     }
     return feedback;
 }
@@ -100,9 +100,9 @@ function start(){
     gameState.set('IN_PROGRESS');
     const colors = ["red", "blue", "green", "yellow"];
     round.set(0);
-    guessArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
-    feedbackArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
-    currentRound.set(['', '', '', '']);
+    guessArray.set(Array.from({ length: 12 }, () => ["", "", "", ""]));
+    feedbackArray.set(Array.from({ length: 12 }, () => ["", "", "", ""]));
+    currentRound.set(["", "", "", ""]);
     colorIndex.set(0);
     answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
 }
