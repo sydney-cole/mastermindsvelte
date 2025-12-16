@@ -136,11 +136,17 @@ function start(){
         <button class="color-btn green" on:click={() => setColor("green")}></button>
         <button class="color-btn yellow" on:click={() => setColor("yellow")}></button>
     </div>
+    {#if $gameState === 'IN_PROGRESS'}
     <button on:click={submitGuess}>Submit Guess</button>
+    {/if}
 {/if}</div>
 
 <p>{#if $gameState === 'WON'}You won!{/if}</p>
-<p>{#if $gameState === 'LOST'}You lost! The answer was {$answerKey.join(', ')}{/if}</p>
+<p>{#if $gameState === 'LOST'}You lost! The answer was 
+    {#each $answerKey as answerColor}
+        <button class="color-btn {answerColor}"></button>
+    {/each}
+{/if}</p>
 
 <style>
 .color-btn {
