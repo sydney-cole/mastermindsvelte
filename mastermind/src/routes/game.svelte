@@ -29,8 +29,13 @@ let colorIndex = writable(0);
 let gameState = writable("START"); //START, IN_PROGRESS, WON, LOST
 
 //check lose condition
-function gameLost(){
-    return get(round) > 2;
+function checkGameState(){
+    if (get(round) > 1) {
+        gameState.set('LOST');
+    }
+    if (get(feedbackArray)[get(round) - 1].every(color => color === 'red')) {
+        gameState.set('WON');
+    }
 }
 
 //provide feedback
@@ -43,15 +48,6 @@ function checkFeedback(){
         if (guess[i] === answer[i] && guess[i] !== '') rightSpot++;
         else if (answer.includes(guess[i]) && guess[i] !== '') rightColor++;
     }
-    if (rightSpot == 4) {
-        gameState.set('WON');
-        return ['red', 'red', 'red', 'red'];
-    }
-    if (gameLost()) {
-        gameState.set('LOST');
-        return ['', '', '', ''];
-    }
-
     let feedback = [];
     for (let i = 0; i < rightSpot; i++) {
         feedback.push('red');
@@ -92,6 +88,8 @@ function submitGuess(){
     feedbackArray.set(updatedFeedback);
 
     round.set(roundVal + 1);
+    checkGameState();
+
     currentRound.set(['', '', '', '']);
     colorIndex.set(0);
     //add UI stuff here
@@ -166,5 +164,5 @@ function start(){
 .color-btn.yellow { background: yellow; }
 .color-btn.white { background: white; }
 
-.color-btn.tiny {width: 10px; height: 5px; margin: 0 2px;}
+.color-btn.tiny {width: 5px; height: 5px; margin: 0 2px;}
 </style>
