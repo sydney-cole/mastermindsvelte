@@ -25,6 +25,7 @@ let answerKey = writable(['', '', '', '']);
 let guessArray = writable(Array.from({ length: 12 }, () => ['', '', '', '']));
 let currentRound = writable(['', '', '', '']);
 let colorIndex = writable(0);
+let gameState = writable("START"); //START, IN_PROGRESS, WON, LOST
 
 //check lose condition
 function gameLost(){
@@ -34,7 +35,7 @@ function gameLost(){
 //provide feedback
 function checkFeedback(){
     const answer = get(answerKey);
-    const guess = get(guessArray)[get(round)];
+    const guess = get(currentRound);
     let rightSpot = 0;
     let rightColor = 0;
     for (let i = 0; i < guess.length; i++) {
@@ -68,24 +69,31 @@ function submitGuess(){
     if (colorIdx < 3) return;
     const updatedGuesses = guesses.map((guess, i) => i === roundVal ? [...curr] : guess);
     guessArray.set(updatedGuesses);
+
+    let feedback = checkFeedback();
+    if (feedback[0] == 4) {
+        gameState.set('WON');
+    }
+    if (gameLost()) {
+        gameState.set('LOST');
+    }
+
     round.set(roundVal + 1);
     currentRound.set(['', '', '', '']);
     colorIndex.set(0);
-
-    let feedback = checkFeedback();
-    if (feedback[0] == 4) return 'game won!';
-    if (gameLost()) return 'game lost :('
     //add UI stuff here
 }
 
 //start game
 function start(){
+    gameState.set('IN_PROGRESS');
     const colors = ['red', 'blue', 'green', 'yellow'];
     round.set(0);
     guessArray.set(Array.from({ length: 12 }, () => ['', '', '', '']));
     currentRound.set(['', '', '', '']);
     colorIndex.set(0);
-    answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
+    answerKey.set(['red', 'red', 'red', 'red']);
+    //answerKey.set(Array.from({ length: 4 }, () => colors[Math.floor(Math.random() * colors.length)]));
 }
 
 </script>
@@ -98,6 +106,10 @@ function start(){
         {/each}
     </li>
     {/each}
+    <li>{#each $currentRound as selectedColor}
+            <button class="color-btn {selectedColor}"></button>
+        {/each}
+    </li>
     </ul>
 </div>
 <div>
@@ -107,6 +119,9 @@ function start(){
     <button class="color-btn yellow" on:click={() => setColor('yellow')}></button>
 </div>
 <button on:click={submitGuess}>Submit Guess</button>
+<button on:click={start}>Start Game</button>
+<p>{#if $gameState === 'WON'}You won!{/if}</p>
+<p>{#if $gameState === 'LOST'}You lost! The answer was {$answerKey.join(', ')}{/if}</p>
 
 <style>
 .color-btn {
