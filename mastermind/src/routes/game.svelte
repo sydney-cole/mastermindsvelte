@@ -33,9 +33,6 @@ function checkGameState(){
     if (get(round) > 11) {
         return gameState.set('LOST');
     }
-    if (get(feedbackArray)[get(round) - 1].every(color => color === "red")) {
-        return gameState.set('WON');
-    }
 }
 
 //provide feedback
